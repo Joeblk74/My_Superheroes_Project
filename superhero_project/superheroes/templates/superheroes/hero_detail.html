@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}Superhero Detail{% endblock %}
+
+{% block content %}
+    <h1>{{ hero.name }}</h1>
+    {% if hero.image %}
+    <img src="{{ hero.image.url }}">
+    {% endif %}
+    <ul>
+        <li><strong>Name:</strong> {{ hero.alter_ego }}</li>
+        <li><strong>Primary Ability:</strong> {{ hero.primary_ability }}</li>
+        <li><strong>Secondary Ability:</strong> {{ hero.secondary_ability }}</li>
+        <li><strong>Catch Phrase:</strong> {{ hero.catch_phrase }}</li>
+    </ul>
+    <a style="color: orange" href="{% url 'superheroes:hero_edit' hero.id %}">Edit</a>
+    <a style="color: red" href="{% url 'superheroes:hero_delete' hero.id %}">Delete</a>
+{% endblock %}

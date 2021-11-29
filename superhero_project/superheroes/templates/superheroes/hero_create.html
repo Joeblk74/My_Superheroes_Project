@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}Create New Superhero{% endblock %}
+
+{% block content %}
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        Name: <input type="text" name="name" id="name"><br>
+        Image: <input type="file" name="image" id="image"><br>
+        Alter Ego: <input type="text" name="alter_ego" id="alter_ego"><br>
+        Primary Ability: <input type="text" name="primary_ability" id="primary_ability"><br>
+        Secondary Ability: <input type="text" name="secondary_ability" id="secondary_ability"><br>
+        Catchphrase: <input type="text" name="catch_phrase" id="catch_phrase"><br>
+
+        <button type="submit">Add</button>
+    </form>
+{% endblock %}

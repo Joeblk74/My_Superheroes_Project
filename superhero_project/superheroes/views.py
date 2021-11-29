@@ -1,50 +1,71 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from .models import Superhero
 
-#  Create your views here.
-def index(request):
+# CRUD: Create Read Update Delete
+# READ: List view, Detail View
+
+def hero_list(request):
     all_heroes = Superhero.objects.all()
-    context = {
-        'all_heroes': all_heroes
-    }
-    return render(request, 'superheroes/index.html', context)
+    context = {'all_heroes': all_heroes}
+    return render(request, 'superheroes/hero_list.html', context)
 
-def detail(request, hero_id):
-    single_hero = Superhero.objects.get(pk=hero_id)
-    context = {
-        'single_hero': single_hero
-    }
-    return render(request, 'superheroes/detail.html', context)
 
-def create(request):
+def hero_detail(request, hero_id):
+    hero = Superhero.objects.get(id=hero_id)
+    context = {'hero': hero}
+    return render(request, 'superheroes/hero_detail.html', context)
+
+
+def hero_create(request):
+ 
+
+
     if request.method == "POST":
         name = request.POST.get('name')
+        image = request.FILES.get('image')
         alter_ego = request.POST.get('alter_ego')
-        primary = request.POST.get('primary')
-        secondary = request.POST.get('secondary')
-        catchphrase = request.POST.get('catchphrase')
-        new_hero = Superhero(name=name, alter_ego=alter_ego, primary_ability= primary, secondary_ability=secondary, catch_phrase=catchphrase)
+        primary_ability = request.POST.get('primary_ability')
+        secondary_ability = request.POST.get('secondary_ability')
+        catch_phrase = request.POST.get('catch_phrase')
+        new_hero = Superhero(
+            name=name,
+            image=image, 
+            alter_ego=alter_ego, 
+            primary_ability=primary_ability, 
+            secondary_ability=secondary_ability, 
+            catch_phrase=catch_phrase)
         new_hero.save()
-        return HttpResponseRedirect(reverse('superheroes:index'))
-    else:    
-        return render(request, 'superheroes/create.html') 
+        return redirect('superheroes:hero_list')
+    return render(request, 'superheroes/hero_create.html') 
 
-def edit(request, hero_id):
-    hero_from_db = Superhero.objects.get(pk=hero_id)
-    context = {
-        'single_hero': hero_from_db
-    }
-    
+
+def hero_edit(request, hero_id):
+    hero = Superhero.objects.get(id=hero_id)
+
+    print(
+    f'GET Data: {request.GET}',
+    f'POST Data: {request.POST}', 
+    f'FILES Data: {request.FILES}',
+    sep='\n')
+
     if request.method == "POST":
-        name_from_form = request.POST.get('name')
-        alter_ego_from_form = request.POST.get('alter_ego')
-        primary_from_form = request.POST.get('primary')
-        secondary_from_form = request.POST.get('secondary')
-        catchphrase_from_form = request.POST.get('catchphrase')
-        hero_edit = Superhero(name=name_from_form, alter_ego=alter_ego_from_form, primary_ability= primary_from_form, secondary_ability=secondary_from_form, catch_phrase=catchphrase_from_form)
-        hero_edit.save()
-        return HttpResponseRedirect(reverse('superheroes:index'))
-    else:    
-        return render(request, 'superheroes/edit.html') 
+        hero.name = request.POST.get('name')
+        image = request.FILES.get('image')
+        hero.image = image if image else hero.image
+        hero.alter_ego = request.POST.get('alter_ego')
+        hero.primary_ability = request.POST.get('primary_ability')
+        hero.secondary_ability = request.POST.get('secondary_ability')
+        hero.catch_phrase = request.POST.get('catch_phrase')
+        hero.save()
+        return redirect('superheroes:hero_list')
+
+    context = {'hero': hero}
+    return render(request, 'superheroes/hero_edit.html', context) 
+
+
+def hero_delete(request, hero_id):
+    hero = Superhero.objects.get(id=hero_id)
+    hero.delete()
+    return redirect('superheroes:hero_list')
